@@ -11,13 +11,23 @@ def register(request):
         serializer = RegisterSerializer(data=request.POST)
         if serializer.is_valid():
             user = serializer.save()
-            messages.success(request, f"User {user.username} registered successfully!")
-            return redirect('/')  
-        else:
-            return render(request, 'register.html', {
-                'errors': serializer.errors,
-                'form_data': request.POST
+            # Return JSON response with user details (excluding password)
+            return JsonResponse({
+                'success': True,
+                'message': 'User registered successfully!',
+                'user': {
+                    'id': user.id,
+                    'username': user.username,
+                    'email': user.email,
+                    'date_joined': user.date_joined.isoformat(),
+                    'is_active': user.is_active
+                }
             })
+        else:
+            return JsonResponse({
+                'success': False,
+                'errors': serializer.errors
+            }, status=400)
     return render(request, 'register.html')
 
 def get_users(request):

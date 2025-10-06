@@ -28,25 +28,24 @@
 				</div>
 				{% endif %}
 				
-				<form method="post" action="">
+				<form id="registerForm" method="post" action="">
 					{% csrf_token %}
 					<div class="mb-3">
 						<label for="id_email" class="form-label">Email address</label>
-						<input type="email" class="form-control {% if errors.email %}is-invalid{% endif %}" 
-							   id="id_email" name="email" placeholder="you@example.com" 
-							   value="{{ form_data.email|default:'' }}" required>
+						<input type="email" class="form-control" 
+							   id="id_email" name="email" placeholder="you@example.com" required>
 					</div>
 
 					<div class="mb-3">
 						<label for="id_username" class="form-label">Username</label>
-						<input type="text" class="form-control {% if errors.username %}is-invalid{% endif %}" 
+						<input type="text" class="form-control" 
 							   id="id_username" name="username" placeholder="Choose a username" 
-							   value="{{ form_data.username|default:'' }}" required maxlength="150">
+							   required maxlength="150">
 					</div>
 
 					<div class="mb-3">
 						<label for="id_password" class="form-label">Password</label>
-						<input type="password" class="form-control {% if errors.password %}is-invalid{% endif %}" 
+						<input type="password" class="form-control" 
 							   id="id_password" name="password" placeholder="At least 8 characters" required minlength="8">
 					</div>
 
@@ -61,6 +60,43 @@
 		</div>
 
 		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+		<script>
+			document.getElementById('registerForm').addEventListener('submit', function(e) {
+				e.preventDefault();
+				
+				const formData = new FormData(this);
+				
+				fetch('/register/', {
+					method: 'POST',
+					body: formData
+				})
+				.then(response => response.json())
+				.then(data => {
+					if (data.success) {
+						// Console log user details
+						console.log('User registered successfully:', data.user);
+						
+						// Show success alert with user details
+						alert(`Registration successful!\n\nUser Details:\nID: ${data.user.id}\nUsername: ${data.user.username}\nEmail: ${data.user.email}\nDate Joined: ${data.user.date_joined}\nActive: ${data.user.is_active}`);
+						
+						// Clear form
+						this.reset();
+					} else {
+						// Show error alert
+						let errorMsg = 'Registration failed:\n';
+						for (let field in data.errors) {
+							errorMsg += `${field}: ${data.errors[field].join(', ')}\n`;
+						}
+						alert(errorMsg);
+						console.log('Registration errors:', data.errors);
+					}
+				})
+				.catch(error => {
+					console.error('Error:', error);
+					alert('An error occurred during registration');
+				});
+			});
+		</script>
 	</body>
 </html>
 

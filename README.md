@@ -1,4 +1,4 @@
-# Zoi techk Python Machine test 
+# Zoi teckh Python Machine test 
 
 Simple Django API for managing users and expenses.
 
