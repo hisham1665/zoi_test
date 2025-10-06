@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <style>
+        table { border-collapse: collapse; width: 50%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .delete-btn { color: red; cursor: pointer; text-decoration: underline; }
+        .delete-btn:hover { background-color: #ffebee; }
+    </style>
+</head>
+<body>
+    <h1>Users</h1>
+    {% if users|length == 0 %}
+        <p>No users found.</p>
+    {% else %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        {% for user in users %}
+        <tr id="user-row-{{ user.id }}">
+            <td>{{ user.id | default:"N/A" }}</td>
+            <td>{{ user.username | default:"N/A" }}</td>
+            <td>{{ user.email | default:"N/A" }}</td>
+            <td>
+                <span class="delete-btn" onclick="deleteUser({{ user.id }}, '{{ user.username }}')">Delete</span>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    {% endif %}
+    <script>
+        function deleteUser(userId, username) {
+            if (confirm(`Are you sure you want to delete user "${username}"?`)) {
+                fetch(`/users/${userId}/delete/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert(data.message);
+                        document.getElementById(`user-row-${userId}`).remove();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error deleting user');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
