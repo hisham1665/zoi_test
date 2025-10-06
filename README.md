@@ -4,18 +4,30 @@ Simple Django API for managing users and expenses.
 
 ## Setup
 
-1. Install dependencies:
+1. Clone the repository:
+```bash
+git clone https://github.com/hisham1665/zoi_test.git
+cd zoi_test
+```
+
+2. Create and activate virtual environment:
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+3. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-2. Run migrations:
+4. Run migrations:
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
 
-3. Start server:
+5. Start server:
 ```bash
 python manage.py runserver
 ```
